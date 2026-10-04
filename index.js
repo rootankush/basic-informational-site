@@ -2,40 +2,27 @@
 // const contactMeURL = new URL('/contact-me', 'http://localhost:8080/');
 // const errorURL = new URL('/404', 'http://localhost:8080/');
 
-const http = require("http");
-const fs = require("fs");
+const express = require("express");
+const path = require("path");
+const app = express();
+const PORT = 8080;
 
-const server = http.createServer((req, res) => {
-  console.log(req);
-
-  res.setHeader("Content-Type", "text/html");
-
-  let path = "./";
-  switch (req.url) {
-    case "/":
-      path += "index.html";
-      break;
-    case "/about":
-      path += "about.html";
-      break;
-    case "/contact-me":
-      path += "contact-me.html";
-      break;
-    default:
-      path += "404.html";
-      break;
-  }
-
-  fs.readFile(path, (err, data) => {
-    if (err) {
-      console.log(err);
-      res.end();
-    } else {
-      res.end(data);
-    }
-  });
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "./", "index.html"));
 });
 
-server.listen(8080, "localhost", () => {
-  console.log("listening for request on port 8080");
+app.get("/about", (req, res) => {
+  res.sendFile(path.join(__dirname, "./", "about.html"));
+});
+
+app.get("/contact-me", (req, res) => {
+  res.sendFile(path.join(__dirname, "./", "contact-me.html"));
+});
+
+app.use((req, res) => {
+  res.status(404).sendFile(path.join(__dirname, ".", "404.html"));
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is running at http://localhost:${PORT}`);
 });
